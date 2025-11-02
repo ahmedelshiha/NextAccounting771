@@ -415,7 +415,7 @@ export class UserManagementSettingsService {
         data: {
           metadata: {
             ...existingMetadata,
-            [this.SETTINGS_KEY]: updatedSettings
+            [this.SETTINGS_KEY]: updatedSettings as any
           }
         }
       })
