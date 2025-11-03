@@ -149,28 +149,28 @@ export function RbacTab() {
   }, [roleModal.mode, closeRoleModal, loadRoles])
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="roles">Roles</TabsTrigger>
-          <TabsTrigger value="hierarchy">Hierarchy</TabsTrigger>
-          <TabsTrigger value="testing">Test Access</TabsTrigger>
-          <TabsTrigger value="conflicts">Conflicts</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-6">
+          <TabsTrigger value="roles" className="text-xs sm:text-sm">Roles</TabsTrigger>
+          <TabsTrigger value="hierarchy" className="text-xs sm:text-sm">Hierarchy</TabsTrigger>
+          <TabsTrigger value="testing" className="text-xs sm:text-sm">Test Access</TabsTrigger>
+          <TabsTrigger value="conflicts" className="text-xs sm:text-sm">Conflicts</TabsTrigger>
         </TabsList>
 
         {/* Roles Tab - Role Management */}
-        <TabsContent value="roles" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TabsContent value="roles" className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Left Column: Role Management */}
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Roles</h3>
-                  <p className="text-sm text-gray-500 mt-1">Create and manage roles</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">Roles</h3>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">Create and manage roles</p>
                 </div>
-                <Button onClick={() => openRoleModal()} className="gap-2">
+                <Button onClick={() => openRoleModal()} className="gap-2 flex-shrink-0 w-full sm:w-auto text-sm">
                   <Plus className="w-4 h-4" />
-                  New Role
+                  <span className="sm:inline">New Role</span>
                 </Button>
               </div>
 
