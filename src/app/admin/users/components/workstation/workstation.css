@@ -173,10 +173,20 @@
   font-size: 0.875rem;
   cursor: pointer;
   transition: opacity 0.2s ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
 }
 
 .sidebar-reset-btn:hover {
   opacity: 0.9;
+}
+
+.sidebar-reset-btn:focus-visible {
+  outline: 2px solid var(--destructive);
+  outline-offset: 2px;
 }
 
 /* ============================================================================
