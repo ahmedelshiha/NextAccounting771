@@ -3,9 +3,9 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react'
 import { TabNavigation, TabType } from './components/TabNavigation'
 import {
-  ExecutiveDashboardTab,
   RbacTab
 } from './components/tabs'
+import { ExecutiveDashboardTabWrapper } from './components/tabs/ExecutiveDashboardTabWrapper'
 import { CreateUserModal } from '@/components/admin/shared/CreateUserModal'
 import { useUsersContext } from './contexts/UsersContextProvider'
 import { ErrorBoundary } from '@/components/providers/error-boundary'
