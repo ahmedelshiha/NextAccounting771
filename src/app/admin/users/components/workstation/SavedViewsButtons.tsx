@@ -23,12 +23,13 @@ interface SavedViewsButtonsProps {
 /**
  * SavedViewsButtons Component
  * Quick access buttons for common user role filters
- * 
+ *
  * Views:
  * - All Users: No filter
- * - Clients: role=CLIENT
- * - Team: role=TEAM_MEMBER|TEAM_LEAD|STAFF
- * - Admins: role=ADMIN
+ * - Clients: role=CLIENT (single role)
+ * - Team: role=TEAM (aggregates TEAM_MEMBER, TEAM_LEAD, STAFF roles)
+ *   Note: Backend should interpret 'TEAM' as filter for all internal team roles
+ * - Admins: role=ADMIN (includes all admin level roles)
  */
 export function SavedViewsButtons({
   activeView = 'all',
@@ -56,8 +57,10 @@ export function SavedViewsButtons({
       name: 'team',
       label: 'Team',
       icon: <Users2 size={16} />,
+      // NOTE: 'TEAM' filter on backend will match TEAM_MEMBER, TEAM_LEAD, and STAFF roles
+      // This provides a convenient aggregated view of internal team members
       roleFilter: 'TEAM',
-      description: 'Internal team members',
+      description: 'Internal team members (TEAM_MEMBER, TEAM_LEAD, STAFF)',
       count: viewCounts.team || 0
     },
     {
