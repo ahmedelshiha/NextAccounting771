@@ -16,24 +16,22 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
   onAddUser,
   onReset,
 }: WorkstationSidebarProps) {
+  // Helper to safely extract string filter values
+  const getFilterValue = (value: any): string | undefined => {
+    return typeof value === 'string' ? value : undefined
+  }
+
   const handleViewChange = useCallback((viewName: string, roleFilter?: string) => {
     if (onFiltersChange) {
-      const current: AUserFilters = {
-        search: (filters as any)?.search || '',
-        role: (filters as any)?.role ?? (typeof (filters as any)?.roleFilter === 'string' ? (filters as any)?.roleFilter : undefined),
-        status: (filters as any)?.status ?? (typeof (filters as any)?.statusFilter === 'string' ? (filters as any)?.statusFilter : undefined),
-        department: (filters as any)?.department ?? (typeof (filters as any)?.departmentFilter === 'string' ? (filters as any)?.departmentFilter : undefined),
-        dateRange: (filters as any)?.dateRange,
-      }
       onFiltersChange({
-        ...current,
+        search: '',
         role: roleFilter || undefined,
         status: undefined,
         department: undefined,
-        search: '',
+        dateRange: 'all',
       } as any)
     }
-  }, [filters, onFiltersChange])
+  }, [onFiltersChange])
 
   const handleResetClick = useCallback(() => {
     if (onFiltersChange) {
@@ -44,12 +42,13 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
     }
   }, [onFiltersChange, onReset])
 
+  // Map filters from WorkstationIntegrated format to AdvancedUserFilters format
   const mappedFilters: AUserFilters = useMemo(() => ({
-    search: (filters as any)?.search || '',
-    role: (filters as any)?.role ?? (typeof (filters as any)?.roleFilter === 'string' ? (filters as any)?.roleFilter : undefined),
-    status: (filters as any)?.status ?? (typeof (filters as any)?.statusFilter === 'string' ? (filters as any)?.statusFilter : undefined),
-    department: (filters as any)?.department ?? (typeof (filters as any)?.departmentFilter === 'string' ? (filters as any)?.departmentFilter : undefined),
-    dateRange: (filters as any)?.dateRange,
+    search: getFilterValue((filters as any)?.search) || '',
+    role: getFilterValue((filters as any)?.role),
+    status: getFilterValue((filters as any)?.status),
+    department: getFilterValue((filters as any)?.department),
+    dateRange: getFilterValue((filters as any)?.dateRange),
   }), [filters])
 
   return (
