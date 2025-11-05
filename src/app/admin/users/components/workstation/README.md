@@ -212,28 +212,63 @@ pnpm test -- --coverage workstation
 - Quick stats cached with 1-minute dedupe, 5-minute throttle
 - URL-based filter persistence for instant restoration
 
-## Accessibility (WCAG 2.1 AA)
+## Accessibility (WCAG 2.1 AA - Phase 4 Complete)
 
 ### Keyboard Navigation
-- Tab: Navigate between sections
-- Arrow keys: Navigate within tables and lists
-- Escape: Close sidebar drawer (mobile)
+- Tab: Navigate between sections and interactive elements
+- Arrow keys: Navigate within tables, lists, and dropdowns
+- Escape: Close sidebar drawer (mobile/tablet) and modals
 - Enter: Activate buttons and links
+- Space: Toggle checkboxes and buttons
 
-### Screen Reader
-- Semantic HTML structure (nav, main, aside)
-- ARIA labels on interactive elements
-- Live regions for stats updates
+### Screen Reader Support
+- Semantic HTML structure (`<main>`, `<nav>`, `<aside>`, `<section>`)
+- ARIA labels on all icon-only buttons
+- ARIA descriptions for complex controls
+- Live regions for real-time stats updates and notifications
+- Proper heading hierarchy (h1, h2, h3)
+- Table headers with proper role attributes
 
 ### Focus Management
-- Focus trap in sidebar drawer (mobile)
-- Visible focus indicators on all interactive elements
-- Skip to main content link
+- **Focus-visible Indicators:**
+  - 2px solid outline with 2px offset
+  - Visible on all interactive elements (buttons, inputs, links)
+  - Works with light and dark mode
+  - Meets 3:1 contrast ratio requirement
+
+- **Focus Trapping:**
+  - Sidebar drawer on mobile/tablet has focus trap
+  - Modals trap focus within modal
+  - Escape key returns focus to trigger element
+
+- **Skip Links:**
+  - "Skip to main content" link (hidden by default, visible on focus)
+  - Keyboard-only navigation supported
+
+### Touch Target Sizing (Mobile)
+- Minimum 44x44px for all interactive elements
+- All buttons, links, and form inputs meet this requirement
+- Proper padding/spacing maintained for touch accuracy
+- Enforced via `@media (pointer: coarse)` rules
 
 ### Color & Contrast
-- Text contrast ratio: 4.5:1 minimum
-- No information conveyed by color alone
-- Supports high contrast mode
+- **Text Contrast:** 4.5:1 minimum (WCAG AA)
+- **UI Components:** 3:1 minimum contrast (WCAG AA)
+- **Dark Mode:** All colors adjust automatically via CSS variables
+- **High Contrast Mode:** Additional 2px borders and increased contrast
+- **No Color-Only Info:** All information conveyed through text/labels, not color alone
+
+### Reduced Motion Support
+- Animations respect `prefers-reduced-motion` setting
+- Users can disable all animations system-wide
+- Transitions disabled for users with vestibular disorders
+
+### Dark Mode Support (Phase 4)
+- Automatic detection of system preference (`prefers-color-scheme: dark`)
+- All colors use CSS variables for light/dark modes
+- No hardcoded colors in component code
+- Full color palette support in dark mode
+- Smooth transitions between modes
 
 ## Feature Flags
 
