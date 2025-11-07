@@ -8,7 +8,7 @@ import DirectoryHeader from './DirectoryHeader'
 import UserDirectorySection from './UserDirectorySection'
 import BulkActionsPanel from './BulkActionsPanel'
 import { BuilderHeaderSlot, BuilderMetricsSlot, BuilderSidebarSlot, BuilderFooterSlot } from './BuilderSlots'
-import { useIsBuilderEnabled } from '@/hooks/useBuilderContent'
+import { useIsBuilderEnabled } from '@/hooks/useIsBuilderEnabled'
 import '../styles/admin-users-layout.css'
 
 /**
@@ -17,7 +17,7 @@ import '../styles/admin-users-layout.css'
  * Layout structure:
  * ┌─────────────────────────────────────────────┐
  * │        Sticky Header: QuickActionsBar        │
- * ├──────────────┬────────────────────────────┤
+ * ├──────────────┬─────────────────────────���──┤
  * │              │                            │
  * │   Sidebar    │     Main Content Area      │
  * │  (Analytics  │   ┌──────────────────┐    │

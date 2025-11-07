@@ -167,3 +167,38 @@ export function BuilderFooterSlot(props: Parameters<typeof BulkActionsPanel>[0])
     </div>
   )
 }
+
+/**
+ * Builder.io content slot wrapper for main content section
+ *
+ * Renders Builder.io content for the main directory/table area
+ * This slot allows customizing the layout of the user directory section
+ */
+export function BuilderMainSlot(props?: any) {
+  const { content, isLoading, error, isEnabled } = useBuilderContent(
+    BUILDER_MODELS.ADMIN_WORKBENCH_MAIN
+  )
+
+  if (!isEnabled) {
+    return null
+  }
+
+  if (isLoading) {
+    return null
+  }
+
+  if (error) {
+    console.warn(`Failed to load Builder.io main content: ${error}`)
+    return null
+  }
+
+  if (!content) {
+    return null
+  }
+
+  return (
+    <div data-builder-model={BUILDER_MODELS.ADMIN_WORKBENCH_MAIN} data-testid="builder-main-slot">
+      {content.blocks ? renderBuilderBlocks(content.blocks) : null}
+    </div>
+  )
+}
