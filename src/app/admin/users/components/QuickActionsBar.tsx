@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import { Plus, Upload, Download, RefreshCw, Settings } from 'lucide-react'
+import { Plus, Upload, Download, RefreshCw, Loader2 } from 'lucide-react'
 
 interface QuickActionsBarProps {
   onAddUser?: () => void
@@ -11,6 +11,7 @@ interface QuickActionsBarProps {
   onExport?: () => void
   onRefresh?: () => void
   isLoading?: boolean
+  isRefreshing?: boolean
 }
 
 /**
@@ -36,7 +37,8 @@ export function QuickActionsBar({
   onImport,
   onExport,
   onRefresh,
-  isLoading = false
+  isLoading = false,
+  isRefreshing = false
 }: QuickActionsBarProps) {
   return (
     <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
@@ -78,23 +80,17 @@ export function QuickActionsBar({
 
           <Button
             onClick={onRefresh}
-            disabled={isLoading}
+            disabled={isLoading || isRefreshing}
             variant="ghost"
-            className="text-gray-700 hover:bg-gray-100 h-10 w-10 p-0"
-            title="Refresh data"
-            aria-label="Refresh data"
+            className="text-gray-700 hover:bg-gray-100 h-10 w-10 p-0 transition-transform"
+            title={isRefreshing ? 'Refreshing data...' : 'Refresh data'}
+            aria-label={isRefreshing ? 'Refreshing data...' : 'Refresh data'}
           >
-            <RefreshCw className="w-5 h-5" />
-          </Button>
-
-          <Button
-            disabled={isLoading}
-            variant="ghost"
-            className="text-gray-700 hover:bg-gray-100 h-10 w-10 p-0"
-            title="Audit trail"
-            aria-label="Audit trail"
-          >
-            <Settings className="w-5 h-5" />
+            {isRefreshing ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <RefreshCw className="w-5 h-5" />
+            )}
           </Button>
         </div>
       </div>

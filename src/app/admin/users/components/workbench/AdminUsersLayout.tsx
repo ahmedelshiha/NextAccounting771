@@ -3,12 +3,14 @@
 import React, { useState, useMemo } from 'react'
 import { QuickActionsBar } from '../QuickActionsBar'
 import { ImportWizard } from '../ImportWizard'
+import { CreateUserModal } from '@/components/admin/shared/CreateUserModal'
 import OverviewCards from './OverviewCards'
 import AdminSidebar from './AdminSidebar'
 import UserDirectorySection from './UserDirectorySection'
 import BulkActionsPanel from './BulkActionsPanel'
 import { BuilderHeaderSlot, BuilderMetricsSlot, BuilderSidebarSlot, BuilderFooterSlot } from './BuilderSlots'
 import { useIsBuilderEnabled } from '@/hooks/useIsBuilderEnabled'
+import { useUsersContext } from '../../contexts/UsersContextProvider'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import '../styles/admin-users-layout.css'
@@ -19,7 +21,7 @@ import '../styles/admin-users-layout.css'
  * Layout structure:
  * ┌─────────────────────────────────────────────┐
  * │        Sticky Header: QuickActionsBar        │
- * ├──────────────┬─────────────────��───────���──┤
+ * ├──────────────┬─────────────────��───────������─┤
  * │              │                            │
  * │   Sidebar    │     Main Content Area      │
  * │  (Analytics  │   ┌──────────────────��    │
@@ -44,7 +46,10 @@ export default function AdminUsersLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [filters, setFilters] = useState<Record<string, any>>({})
   const [showImportWizard, setShowImportWizard] = useState(false)
+  const [showCreateUserModal, setShowCreateUserModal] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const isBuilderEnabled = useIsBuilderEnabled()
+  const context = useUsersContext()
 
   const selectedCount = useMemo(() => selectedUserIds.size, [selectedUserIds.size])
 
@@ -54,7 +59,14 @@ export default function AdminUsersLayout() {
 
   const handleAddUser = () => {
     console.log('Add User clicked')
-    toast.info('Add User feature coming soon')
+    setShowCreateUserModal(true)
+  }
+
+  const handleUserCreated = (userId: string) => {
+    toast.success('User created successfully')
+    setShowCreateUserModal(false)
+    // Trigger refresh of users list
+    context.refreshUsers?.()
   }
 
   const handleImport = () => {
@@ -63,18 +75,71 @@ export default function AdminUsersLayout() {
   }
 
   const handleExport = async () => {
-    console.log('Export clicked')
+    const toastId = toast.loading('Preparing export...')
     try {
-      toast.success('Export feature coming soon')
+      // Build CSV headers
+      const headers = ['ID', 'Name', 'Email', 'Role', 'Status', 'Created At', 'Last Login']
+
+      // Build CSV rows
+      const rows = (Array.isArray(context.users) ? context.users : []).map(user => [
+        user.id,
+        user.name || '',
+        user.email,
+        user.role,
+        user.status || 'ACTIVE',
+        new Date(user.createdAt).toLocaleDateString(),
+        user.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : 'Never'
+      ])
+
+      // Create CSV content with proper escaping
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => {
+          const value = String(cell || '')
+          return value.includes(',') || value.includes('"') ? `"${value.replace(/"/g, '""')}"` : value
+        }).join(','))
+      ].join('\n')
+
+      // Create and trigger download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+
+      link.setAttribute('href', url)
+      link.setAttribute('download', `users-export-${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = 'hidden'
+
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      toast.dismiss(toastId)
+      toast.success(`Exported ${context.users.length} users successfully`)
     } catch (error) {
-      toast.error('Failed to export users')
       console.error('Export error:', error)
+      toast.dismiss(toastId)
+      toast.error('Failed to export users')
     }
   }
 
-  const handleRefresh = () => {
-    console.log('Refresh clicked')
-    window.location.reload()
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    const toastId = toast.loading('Refreshing data...')
+    try {
+      // Trigger data refresh through context
+      if (context.refreshUsers) {
+        await context.refreshUsers()
+      }
+
+      toast.dismiss(toastId)
+      toast.success('Data refreshed successfully')
+    } catch (error) {
+      console.error('Refresh error:', error)
+      toast.dismiss(toastId)
+      toast.error('Failed to refresh data')
+    } finally {
+      setIsRefreshing(false)
+    }
   }
 
   const handleImportComplete = (results: any) => {
@@ -92,6 +157,7 @@ export default function AdminUsersLayout() {
             onImport={handleImport}
             onExport={handleExport}
             onRefresh={handleRefresh}
+            isRefreshing={isRefreshing}
           />
         )}
       </header>
@@ -159,6 +225,14 @@ export default function AdminUsersLayout() {
           <ImportWizard onImportComplete={handleImportComplete} />
         </DialogContent>
       </Dialog>
+
+      {/* Create User Modal */}
+      <CreateUserModal
+        isOpen={showCreateUserModal}
+        onClose={() => setShowCreateUserModal(false)}
+        onSuccess={handleUserCreated}
+        mode="create"
+      />
     </div>
   )
 }
