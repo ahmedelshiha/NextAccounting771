@@ -21,58 +21,22 @@ interface UsersTableProps {
 
 const UserRowSkeleton = memo(function UserRowSkeleton() {
   return (
-    <div className="animate-pulse flex items-center justify-between p-4 bg-white border rounded-lg">
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 bg-gray-200 rounded-full" />
-        <div className="space-y-2">
-          <div className="h-4 bg-gray-200 rounded w-32" />
-          <div className="h-3 bg-gray-200 rounded w-48" />
-        </div>
+    <div className="grid grid-cols-[40px_2fr_2fr_1fr_1fr_80px] items-center gap-4 px-4 py-3 border-b border-gray-200 bg-white animate-pulse">
+      <div className="w-5 h-5 bg-gray-200 rounded" />
+      <div className="space-y-2">
+        <div className="h-4 bg-gray-200 rounded w-32" />
+        <div className="h-3 bg-gray-200 rounded w-48" />
       </div>
-      <div className="hidden sm:block space-y-1">
-        <div className="h-3 bg-gray-200 rounded w-16" />
-        <div className="h-3 bg-gray-200 rounded w-12" />
+      <div className="space-y-2">
+        <div className="h-3 bg-gray-200 rounded w-40" />
+        <div className="h-3 bg-gray-200 rounded w-32" />
       </div>
+      <div className="h-6 bg-gray-200 rounded w-16" />
+      <div className="h-6 bg-gray-200 rounded w-16" />
+      <div className="h-8 bg-gray-200 rounded w-8" />
     </div>
   )
 })
-
-const formatDate = (iso?: string) => {
-  if (!iso) return 'Never'
-  const d = new Date(iso)
-  if (isNaN(d.getTime())) return 'Invalid date'
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-}
-
-const getStatusColor = (status?: string) => {
-  switch (status) {
-    case 'ACTIVE':
-      return 'bg-green-100 text-green-800 border-green-200'
-    case 'INACTIVE':
-      return 'bg-gray-100 text-gray-800 border-gray-200'
-    case 'SUSPENDED':
-      return 'bg-red-100 text-red-800 border-red-200'
-    default:
-      return 'bg-green-100 text-green-800 border-green-200'
-  }
-}
-
-const getRoleColor = (role: string) => {
-  switch (role) {
-    case 'ADMIN':
-      return 'bg-red-100 text-red-800 border-red-200'
-    case 'TEAM_MEMBER':
-      return 'bg-blue-100 text-blue-800 border-blue-200'
-    case 'TEAM_LEAD':
-      return 'bg-purple-100 text-purple-800 border-purple-200'
-    case 'STAFF':
-      return 'bg-blue-100 text-blue-800 border-blue-200'
-    case 'CLIENT':
-      return 'bg-green-100 text-green-800 border-green-200'
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200'
-  }
-}
 
 export const UsersTable = memo(function UsersTable({
   users,
