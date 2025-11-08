@@ -17,7 +17,7 @@ import '../styles/admin-users-layout.css'
  * Layout structure:
  * ┌─────────────────────────────────────────────┐
  * │        Sticky Header: QuickActionsBar        │
- * ├─────────────���┬─────────────────────────���──┤
+ * ├──────────────┬─────────────────────────���──┤
  * │              │                            │
  * │   Sidebar    │     Main Content Area      │
  * │  (Analytics  │   ┌──────────────────┐    │
@@ -74,7 +74,14 @@ export default function AdminUsersLayout() {
     <div className="admin-workbench-container">
       {/* Sticky Header - Builder.io slot with fallback */}
       <header className="admin-workbench-header" role="banner" data-testid="admin-workbench-header">
-        {isBuilderEnabled ? <BuilderHeaderSlot /> : <QuickActionsBar />}
+        {isBuilderEnabled ? <BuilderHeaderSlot /> : (
+          <QuickActionsBar
+            onAddUser={handleAddUser}
+            onImport={handleImport}
+            onExport={handleExport}
+            onRefresh={handleRefresh}
+          />
+        )}
       </header>
 
       {/* Main Content Area */}
