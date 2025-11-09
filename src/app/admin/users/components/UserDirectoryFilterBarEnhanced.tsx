@@ -18,17 +18,21 @@ export interface UserDirectoryFilterBarEnhancedProps {
   onToggleStatus?: (status: string) => void
   onClearRoles?: () => void
   onClearStatuses?: () => void
-  
+
   selectedCount: number
   totalCount: number
   filteredCount: number
+  filteredUsers?: UserItem[]
+  allUsers?: UserItem[]
+  selectedUserIds?: Set<string>
   onSelectAll: (selected: boolean) => void
-  
+
   roleOptions?: FilterOption[]
   statusOptions?: FilterOption[]
-  
+
   onClearFilters: () => void
   multiSelect?: boolean
+  showExport?: boolean
 }
 
 const DEFAULT_ROLE_OPTIONS: FilterOption[] = [
