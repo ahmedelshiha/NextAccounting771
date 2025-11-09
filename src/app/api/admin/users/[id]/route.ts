@@ -29,7 +29,6 @@ export const GET = withTenantContext(async (request: NextRequest, context: { par
         name: true,
         email: true,
         role: true,
-        status: true,
         createdAt: true,
         updatedAt: true
       }

@@ -2,6 +2,7 @@
 
 import React, { memo, useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Lock, LogOut, Bell, Trash2, Pause, Eye } from 'lucide-react'
 import { UserItem } from '../../contexts/UsersContextProvider'
 import {

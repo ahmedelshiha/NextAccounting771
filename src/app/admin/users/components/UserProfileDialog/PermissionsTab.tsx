@@ -25,9 +25,9 @@ interface PermissionsTabProps {
 export const PermissionsTab = memo(function PermissionsTab({ user }: PermissionsTabProps) {
   const { setSelectedUser } = useUsersContext()
   const [isSaving, setIsSaving] = useState(false)
-  const [selectedRole, setSelectedRole] = useState(user.role || 'VIEWER')
+  const [selectedRole, setSelectedRole] = useState<'ADMIN' | 'CLIENT' | 'TEAM_MEMBER' | 'TEAM_LEAD' | 'STAFF' | 'VIEWER'>(user.role || 'VIEWER')
   const [selectedPermissions, setSelectedPermissions] = useState<Permission[]>(
-    user.permissions || []
+    (user.permissions as Permission[]) || []
   )
   const [error, setError] = useState<string | null>(null)
 
@@ -51,11 +51,11 @@ export const PermissionsTab = memo(function PermissionsTab({ user }: Permissions
   }, [])
 
   const handleRoleChange = useCallback((newRole: string) => {
-    setSelectedRole(newRole)
+    setSelectedRole(newRole as 'ADMIN' | 'CLIENT' | 'TEAM_MEMBER' | 'TEAM_LEAD' | 'STAFF' | 'VIEWER')
     setError(null)
     // Optionally update permissions based on role
     if (ROLE_PERMISSIONS && ROLE_PERMISSIONS[newRole]) {
-      setSelectedPermissions(ROLE_PERMISSIONS[newRole] as Permission[])
+      setSelectedPermissions((ROLE_PERMISSIONS[newRole] as unknown as string[]) as Permission[])
     }
   }, [])
 
@@ -74,8 +74,8 @@ export const PermissionsTab = memo(function PermissionsTab({ user }: Permissions
   )
 
   const handleReset = useCallback(() => {
-    setSelectedRole(user.role || 'VIEWER')
-    setSelectedPermissions(user.permissions || [])
+    setSelectedRole((user.role as 'ADMIN' | 'CLIENT' | 'TEAM_MEMBER' | 'TEAM_LEAD' | 'STAFF' | 'VIEWER') || 'VIEWER')
+    setSelectedPermissions((user.permissions as Permission[]) || [])
     setError(null)
   }, [user])
 
@@ -100,8 +100,8 @@ export const PermissionsTab = memo(function PermissionsTab({ user }: Permissions
               to: selectedRole,
             },
             permissionChanges: {
-              added: selectedPermissions.filter(p => !user.permissions?.includes(p)),
-              removed: (user.permissions || []).filter(p => !selectedPermissions.includes(p)),
+              added: selectedPermissions.filter(p => !(user.permissions as Permission[])?.includes(p)),
+              removed: ((user.permissions as Permission[]) || []).filter(p => !selectedPermissions.includes(p)),
             },
           }),
         }
