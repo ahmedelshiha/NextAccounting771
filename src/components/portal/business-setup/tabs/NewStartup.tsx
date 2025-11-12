@@ -128,7 +128,7 @@ export default function NewStartupTab({
         <CardHeader>
           <CardTitle className="text-lg">Create New Business</CardTitle>
           <CardDescription>
-            Set up a new company that hasn't been registered yet
+            Set up a new company that hasn&apos;t been registered yet
           </CardDescription>
         </CardHeader>
         <CardContent>
