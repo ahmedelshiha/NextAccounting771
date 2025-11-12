@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useToast } from '@/components/ui/use-toast'
+import { toast } from 'sonner'
 
 export interface IntegrationInfo {
   name: string
@@ -42,7 +42,6 @@ export interface IntegrationConfig {
 }
 
 export function useIntegrations() {
-  const { toast } = useToast()
   const [integrations, setIntegrations] = useState<Record<string, IntegrationInfo>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -61,52 +60,38 @@ export function useIntegrations() {
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
         setError(message)
-        toast({
-          title: 'Error',
-          description: `Failed to load integrations: ${message}`,
-          variant: 'destructive',
-        })
+        toast.error(`Failed to load integrations: ${message}`)
       } finally {
         setLoading(false)
       }
     }
 
     loadIntegrations()
-  }, [toast])
+  }, [])
 
   // Configure integration
-  const configureIntegration = useCallback(
-    async (config: IntegrationConfig) => {
-      try {
-        const response = await fetch('/api/admin/users/integrations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(config),
-        })
+  const configureIntegration = useCallback(async (config: IntegrationConfig) => {
+    try {
+      const response = await fetch('/api/admin/users/integrations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      })
 
-        if (!response.ok) {
-          throw new Error('Failed to configure integration')
-        }
-
-        const data = await response.json()
-        toast({
-          title: 'Success',
-          description: 'Integration configured successfully',
-        })
-
-        return data
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Unknown error'
-        toast({
-          title: 'Error',
-          description: `Failed to configure integration: ${message}`,
-          variant: 'destructive',
-        })
-        throw err
+      if (!response.ok) {
+        throw new Error('Failed to configure integration')
       }
-    },
-    [toast]
-  )
+
+      const data = await response.json()
+      toast.success('Integration configured successfully')
+
+      return data
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      toast.error(`Failed to configure integration: ${message}`)
+      throw err
+    }
+  }, [])
 
   // Test integration connection
   const testIntegration = useCallback(
@@ -121,30 +106,19 @@ export function useIntegrations() {
         const data = await response.json()
 
         if (data.success) {
-          toast({
-            title: 'Success',
-            description: `${platform} webhook test successful (${data.responseTime}ms)`,
-          })
+          toast.success(`${platform} webhook test successful (${data.responseTime}ms)`)
         } else {
-          toast({
-            title: 'Connection Failed',
-            description: data.message || `Failed to connect to ${platform}`,
-            variant: 'destructive',
-          })
+          toast.error(data.message || `Failed to connect to ${platform}`)
         }
 
         return data
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
-        toast({
-          title: 'Error',
-          description: `Integration test failed: ${message}`,
-          variant: 'destructive',
-        })
+        toast.error(`Integration test failed: ${message}`)
         throw err
       }
     },
-    [toast]
+    []
   )
 
   return {
@@ -160,9 +134,8 @@ export function useIntegrations() {
  * Hook for Slack integration
  */
 export function useSlackIntegration() {
-  const [config, setConfig] = useState<{webhookUrl: string} | null>(null)
+  const [config, setConfig] = useState<{ webhookUrl: string } | null>(null)
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
   const configure = useCallback(async (webhookUrl: string) => {
     try {
@@ -177,23 +150,16 @@ export function useSlackIntegration() {
       const data = await response.json()
 
       setConfig({ webhookUrl })
-      toast({
-        title: 'Success',
-        description: 'Slack integration configured',
-      })
+      toast.success('Slack integration configured')
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to configure Slack',
-        variant: 'destructive',
-      })
+      toast.error('Failed to configure Slack')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   const test = useCallback(async (webhookUrl: string) => {
     try {
@@ -207,30 +173,19 @@ export function useSlackIntegration() {
       const data = await response.json()
 
       if (data.success) {
-        toast({
-          title: 'Success',
-          description: 'Slack connection test successful',
-        })
+        toast.success('Slack connection test successful')
       } else {
-        toast({
-          title: 'Failed',
-          description: data.message || 'Connection test failed',
-          variant: 'destructive',
-        })
+        toast.error(data.message || 'Connection test failed')
       }
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to test connection',
-        variant: 'destructive',
-      })
+      toast.error('Failed to test connection')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   return { config, loading, configure, test }
 }
@@ -239,9 +194,8 @@ export function useSlackIntegration() {
  * Hook for Teams integration
  */
 export function useTeamsIntegration() {
-  const [config, setConfig] = useState<{webhookUrl: string} | null>(null)
+  const [config, setConfig] = useState<{ webhookUrl: string } | null>(null)
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
   const configure = useCallback(async (webhookUrl: string) => {
     try {
@@ -256,23 +210,16 @@ export function useTeamsIntegration() {
       const data = await response.json()
 
       setConfig({ webhookUrl })
-      toast({
-        title: 'Success',
-        description: 'Teams integration configured',
-      })
+      toast.success('Teams integration configured')
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to configure Teams',
-        variant: 'destructive',
-      })
+      toast.error('Failed to configure Teams')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   const test = useCallback(async (webhookUrl: string) => {
     try {
@@ -286,30 +233,19 @@ export function useTeamsIntegration() {
       const data = await response.json()
 
       if (data.success) {
-        toast({
-          title: 'Success',
-          description: 'Teams connection test successful',
-        })
+        toast.success('Teams connection test successful')
       } else {
-        toast({
-          title: 'Failed',
-          description: data.message || 'Connection test failed',
-          variant: 'destructive',
-        })
+        toast.error(data.message || 'Connection test failed')
       }
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to test connection',
-        variant: 'destructive',
-      })
+      toast.error('Failed to test connection')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   return { config, loading, configure, test }
 }
@@ -318,9 +254,8 @@ export function useTeamsIntegration() {
  * Hook for Zapier integration
  */
 export function useZapierIntegration() {
-  const [config, setConfig] = useState<{webhookUrl: string} | null>(null)
+  const [config, setConfig] = useState<{ webhookUrl: string } | null>(null)
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
   const configure = useCallback(async (webhookUrl: string) => {
     try {
@@ -335,23 +270,16 @@ export function useZapierIntegration() {
       const data = await response.json()
 
       setConfig({ webhookUrl })
-      toast({
-        title: 'Success',
-        description: 'Zapier integration configured',
-      })
+      toast.success('Zapier integration configured')
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to configure Zapier',
-        variant: 'destructive',
-      })
+      toast.error('Failed to configure Zapier')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   const test = useCallback(async (webhookUrl: string) => {
     try {
@@ -365,30 +293,19 @@ export function useZapierIntegration() {
       const data = await response.json()
 
       if (data.success) {
-        toast({
-          title: 'Success',
-          description: 'Zapier connection test successful',
-        })
+        toast.success('Zapier connection test successful')
       } else {
-        toast({
-          title: 'Failed',
-          description: data.message || 'Connection test failed',
-          variant: 'destructive',
-        })
+        toast.error(data.message || 'Connection test failed')
       }
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to test connection',
-        variant: 'destructive',
-      })
+      toast.error('Failed to test connection')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   return { config, loading, configure, test }
 }
@@ -397,9 +314,8 @@ export function useZapierIntegration() {
  * Hook for Webhook integration
  */
 export function useWebhookIntegration() {
-  const [config, setConfig] = useState<{url: string; secret?: string} | null>(null)
+  const [config, setConfig] = useState<{ url: string; secret?: string } | null>(null)
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
   const configure = useCallback(async (url: string, secret?: string) => {
     try {
@@ -414,23 +330,16 @@ export function useWebhookIntegration() {
       const data = await response.json()
 
       setConfig({ url, secret })
-      toast({
-        title: 'Success',
-        description: 'Webhook integration configured',
-      })
+      toast.success('Webhook integration configured')
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to configure webhook',
-        variant: 'destructive',
-      })
+      toast.error('Failed to configure webhook')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   const test = useCallback(async (url: string) => {
     try {
@@ -444,30 +353,19 @@ export function useWebhookIntegration() {
       const data = await response.json()
 
       if (data.success) {
-        toast({
-          title: 'Success',
-          description: 'Webhook connection test successful',
-        })
+        toast.success('Webhook connection test successful')
       } else {
-        toast({
-          title: 'Failed',
-          description: data.message || 'Connection test failed',
-          variant: 'destructive',
-        })
+        toast.error(data.message || 'Connection test failed')
       }
 
       return data
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to test connection',
-        variant: 'destructive',
-      })
+      toast.error('Failed to test connection')
       throw error
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   return { config, loading, configure, test }
 }

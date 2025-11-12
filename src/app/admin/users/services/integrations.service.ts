@@ -7,12 +7,12 @@ import {
 } from './slack-integration.service'
 import {
   ZapierIntegrationService,
-  ZapierIntegrationConfig,
+  ZapierConfig,
   FilterTriggerPayload,
 } from './zapier-integration.service'
 import {
   WebhookIntegrationService,
-  WebhookIntegrationConfig,
+  WebhookConfig,
   FilterEventPayload,
   PresetEventPayload,
 } from './webhook-integration.service'
@@ -24,8 +24,8 @@ import {
 
 export interface IntegrationConfig {
   slack?: SlackIntegrationConfig
-  zapier?: ZapierIntegrationConfig
-  webhook?: WebhookIntegrationConfig
+  zapier?: ZapierConfig
+  webhook?: WebhookConfig
   teams?: TeamsIntegrationConfig
 }
 
