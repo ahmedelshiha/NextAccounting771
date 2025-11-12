@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 import { logAuditSafe } from '@/lib/observability-helpers'
 import { z } from 'zod'
 import Stripe from 'stripe'
@@ -7,11 +7,11 @@ import { withTenantContext } from '@/lib/api-wrapper'
 import { requireTenantContext } from '@/lib/tenant-utils'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-04-10',
+  apiVersion: '2025-09-30.clover',
 })
 
 const AddPaymentMethodSchema = z.object({
-  paymentMethodId: z.string().min(1), // Stripe payment method ID
+  paymentMethodId: z.string().min(1),
   setAsDefault: z.boolean().default(false),
 })
 

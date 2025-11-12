@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 import { logAuditSafe } from '@/lib/observability-helpers'
 import { withTenantContext } from '@/lib/api-wrapper'
 import { requireTenantContext } from '@/lib/tenant-utils'
 import { z } from 'zod'
-import { BankingProviderFactory } from '@/lib/banking/adapters'
+import { createBankingProvider } from '@/lib/banking/adapters'
 
 const CreateConnectionSchema = z.object({
   provider: z.enum(['plaid', 'uae', 'ksa', 'csv']),
