@@ -105,6 +105,10 @@ model User {
   consentsAccepted          Consent[]
   verificationAttempts      VerificationAttempt[] @relation("VerificationAttemptBy")
   entityAuditLogs           EntityAuditLog[]
+  documentVersions          DocumentVersion[]     @relation("DocumentVersionUploader")
+  supportTicketsCreated     SupportTicket[]       @relation("SupportTicketsCreated")
+  supportTicketsAssigned    SupportTicket[]       @relation("SupportTicketsAssigned")
+  supportTicketComments     SupportTicketComment[]  @relation("SupportTicketComments")
 
   @@unique([tenantId, email])
   @@index([tenantId, role])
@@ -332,6 +336,10 @@ model Tenant {
   entities              Entity[]
   consents              Consent[]
   verificationAttempts  VerificationAttempt[]
+  documentVersions      DocumentVersion[]
+  documentLinks         DocumentLink[]
+  documentAuditLogs     DocumentAuditLog[]
+  supportTickets        SupportTicket[]           @relation("SupportTickets")
 
   @@index([status])
 }
@@ -914,9 +922,76 @@ model Attachment {
   tenant           Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   uploader         User?           @relation(fields: [uploaderId], references: [id])
   expenses         Expense[]
+  versions         DocumentVersion[]
+  links            DocumentLink[]
+  auditLogs        DocumentAuditLog[]
 
   @@index([serviceRequestId])
   @@index([tenantId])
+}
+
+model DocumentVersion {
+  id                  String          @id @default(cuid())
+  attachmentId        String
+  versionNumber       Int
+  name                String?
+  size                Int?
+  contentType         String?
+  key                 String?
+  url                 String?
+  uploadedAt          DateTime        @default(now())
+  uploaderId          String?
+  changeDescription   String?
+  tenantId            String
+  createdAt           DateTime        @default(now())
+
+  attachment          Attachment      @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+  uploader            User?           @relation("DocumentVersionUploader", fields: [uploaderId], references: [id])
+  tenant              Tenant          @relation("DocumentVersions", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([attachmentId, versionNumber])
+  @@index([attachmentId])
+  @@index([tenantId])
+  @@index([uploadedAt])
+}
+
+model DocumentLink {
+  id                  String          @id @default(cuid())
+  attachmentId        String
+  linkedToType        String          // 'FILING', 'TASK', 'SERVICE_REQUEST', etc.
+  linkedToId          String          // ID of the linked entity
+  linkedAt            DateTime        @default(now())
+  linkedBy            String?         // User who created the link
+  tenantId            String
+
+  attachment          Attachment      @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+  tenant              Tenant          @relation("DocumentLinks", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([attachmentId, linkedToType, linkedToId])
+  @@index([attachmentId])
+  @@index([linkedToType])
+  @@index([linkedToId])
+  @@index([tenantId])
+}
+
+model DocumentAuditLog {
+  id                  String          @id @default(cuid())
+  attachmentId        String
+  action              String          // 'upload', 'download', 'delete', 'star', 'link', etc.
+  details             Json?
+  performedBy         String?
+  performedAt         DateTime        @default(now())
+  ipAddress           String?
+  userAgent           String?
+  tenantId            String
+
+  attachment          Attachment      @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+  tenant              Tenant          @relation("DocumentAuditLogs", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([attachmentId])
+  @@index([performedAt])
+  @@index([tenantId])
+  @@index([action])
 }
 
 model WorkOrder {
@@ -1780,6 +1855,79 @@ model WorkflowHistory {
 
   @@index([workflowId, createdAt])
   @@map("workflow_history")
+}
+
+model SupportTicket {
+  id                    String                    @id @default(cuid())
+  tenantId              String
+  userId                String
+  assignedToId          String?
+  title                 String
+  description           String?
+  category              String                    @default("GENERAL")
+  priority              String                    @default("MEDIUM")
+  status                String                    @default("OPEN")
+  resolution            String?
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+  resolvedAt            DateTime?
+  dueAt                 DateTime?
+  slaFirstResponseAt    DateTime?
+  slaResolutionAt       DateTime?
+  attachmentIds         String[]
+  tags                  String[]
+  metadata              Json?
+
+  tenant                Tenant                    @relation("SupportTickets", fields: [tenantId], references: [id], onDelete: Cascade)
+  user                  User                      @relation("SupportTicketsCreated", fields: [userId], references: [id], onDelete: Cascade)
+  assignedTo            User?                     @relation("SupportTicketsAssigned", fields: [assignedToId], references: [id], onDelete: SetNull)
+  comments              SupportTicketComment[]
+  statusHistory         SupportTicketStatusHistory[]
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([createdAt])
+  @@index([dueAt])
+  @@map("support_tickets")
+}
+
+model SupportTicketComment {
+  id                    String                    @id @default(cuid())
+  ticketId              String
+  authorId              String
+  content               String
+  attachmentIds         String[]
+  isInternal            Boolean                   @default(false)
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+
+  ticket                SupportTicket             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author                User                      @relation("SupportTicketComments", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("support_ticket_comments")
+}
+
+model SupportTicketStatusHistory {
+  id                    String                    @id @default(cuid())
+  ticketId              String
+  previousStatus        String?
+  newStatus             String
+  changedBy             String?
+  reason                String?
+  changedAt             DateTime                  @default(now())
+
+  ticket                SupportTicket             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([changedAt])
+  @@map("support_ticket_status_history")
 }
 
 enum TaskPriority {
