@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/prisma'
 import prisma from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import Stripe from 'stripe'
