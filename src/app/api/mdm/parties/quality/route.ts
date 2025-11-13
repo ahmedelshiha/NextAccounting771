@@ -33,6 +33,14 @@ async function handlePOST(request: NextRequest) {
   try {
     const ctx = tenantContext.getContext();
 
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
+
     // Parse and validate request body
     const body = await request.json();
     const { partyId } = QualityScoreSchema.parse(body);
@@ -42,7 +50,7 @@ async function handlePOST(request: NextRequest) {
 
     // Calculate quality score
     const qualityScore = await mdm.calculatePartyQualityScore(
-      ctx.tenantId!,
+      ctx.tenantId,
       partyId
     );
 
@@ -87,6 +95,14 @@ async function handleGET(request: NextRequest) {
   try {
     const ctx = tenantContext.getContext();
 
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
+
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
     const recordId = searchParams.get('recordId');
@@ -103,7 +119,7 @@ async function handleGET(request: NextRequest) {
     const mdm = new MDMService(prisma);
 
     // Get merge history
-    const history = await mdm.getMergeHistory(ctx.tenantId!, recordId, limit);
+    const history = await mdm.getMergeHistory(ctx.tenantId, recordId, limit);
 
     logger.info('Merge history retrieved', {
       tenantId: ctx.tenantId,

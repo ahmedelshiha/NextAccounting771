@@ -38,6 +38,14 @@ async function handlePOST(request: NextRequest) {
   try {
     const ctx = tenantContext.getContext();
 
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
+
     // Parse and validate request body
     const body = await request.json();
     const { partyId, threshold } = FindDuplicatesSchema.parse(body);
@@ -47,7 +55,7 @@ async function handlePOST(request: NextRequest) {
 
     // Find duplicates
     const duplicates = await mdm.findPartyDuplicates(
-      ctx.tenantId!,
+      ctx.tenantId,
       partyId,
       threshold
     );

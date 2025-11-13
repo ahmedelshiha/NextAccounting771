@@ -36,6 +36,14 @@ async function handlePOST(request: NextRequest) {
   try {
     const ctx = tenantContext.getContext();
 
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
+
     // Parse and validate request body
     const body = await request.json();
     const { masterPartyId, duplicatePartyId, survivorshipRuleId, mergeReason } =
@@ -46,7 +54,7 @@ async function handlePOST(request: NextRequest) {
 
     // Perform merge
     const result = await mdm.mergeParties(
-      ctx.tenantId!,
+      ctx.tenantId,
       masterPartyId,
       duplicatePartyId,
       survivorshipRuleId,
@@ -95,6 +103,14 @@ async function handlePUT(request: NextRequest) {
   try {
     const ctx = tenantContext.getContext();
 
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
+
     // Parse and validate request body
     const body = await request.json();
     const { mergeLogId, unmergeReason } = UnmergeSchema.parse(body);
@@ -104,7 +120,7 @@ async function handlePUT(request: NextRequest) {
 
     // Perform unmerge
     const result = await mdm.unmergeParty(
-      ctx.tenantId!,
+      ctx.tenantId,
       mergeLogId,
       unmergeReason
     );

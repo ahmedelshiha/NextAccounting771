@@ -35,6 +35,14 @@ async function handleGET(
   try {
     const ctx = tenantContext.getContext();
 
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
+
     // Fetch rule
     const rule = await prisma.survivorshipRule.findUnique({
       where: { id: params.id },
@@ -75,6 +83,14 @@ async function handlePUT(
 ) {
   try {
     const ctx = tenantContext.getContext();
+
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
 
     // Verify rule exists and belongs to tenant
     const rule = await prisma.survivorshipRule.findUnique({
@@ -137,6 +153,14 @@ async function handleDELETE(
 ) {
   try {
     const ctx = tenantContext.getContext();
+
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
 
     // Verify rule exists and belongs to tenant
     const rule = await prisma.survivorshipRule.findUnique({

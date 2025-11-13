@@ -63,6 +63,14 @@ async function handleGET(request: NextRequest) {
   try {
     const ctx = tenantContext.getContext();
     
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
+    
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
     const params = ListPartiesSchema.parse({
@@ -122,6 +130,14 @@ async function handleGET(request: NextRequest) {
 async function handlePOST(request: NextRequest) {
   try {
     const ctx = tenantContext.getContext();
+
+    // Ensure tenant context is present
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant context is missing' },
+        { status: 400 }
+      );
+    }
 
     // Parse and validate request body
     const body = await request.json();
