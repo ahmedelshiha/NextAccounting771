@@ -361,6 +361,14 @@ Epic: DOC-3 Vault
 Epic: MSG-4 Cases & chat
 
 **Fully Implemented** ✅:
+- ✅ Support ticket database persistence (SupportTicket, SupportTicketComment, SupportTicketStatusHistory models)
+- ✅ Knowledge Base CMS (KnowledgeBaseCategory, KnowledgeBaseArticle models)
+- ✅ **Complete API Coverage**:
+  - Support tickets: GET/POST /api/support/tickets, GET/PATCH/DELETE /api/support/tickets/[id]
+  - Support comments: POST/GET /api/support/tickets/[id]/comments
+  - Knowledge base: GET/POST /api/knowledge-base, GET/PATCH/DELETE /api/knowledge-base/[id]
+  - Knowledge categories: GET/POST /api/knowledge-base/categories, GET/PATCH/DELETE /api/knowledge-base/categories/[id]
+  - Article feedback: POST /api/knowledge-base/[id]/feedback
 - ✅ Real-time chat for portal users (src/app/api/portal/chat/route.ts)
 - ✅ Real-time chat for admin (src/app/api/admin/chat/route.ts)
 - ✅ Live chat widget (src/components/portal/LiveChatWidget.tsx)
@@ -563,7 +571,7 @@ Epic: SEC-14 Hardening
 - ✅ Device fingerprinting: OS/browser/user agent tracking
 - ✅ Trust scoring: Algorithm for calculating device trust levels
 - ✅ Audit logging: Security event logging and tracking
-- ✅ Services: src/lib/security/step-up-auth.ts with 380+ lines
+- �� Services: src/lib/security/step-up-auth.ts with 380+ lines
 
 ## Phase 15 — Go-Live & Stabilization
 **Status: ✅ COMPLETE**
@@ -849,7 +857,7 @@ Phase 7 — Country Workflows
 - [ ] Egypt VAT/e‑Invoice templates + withholding rules
 
 Phase 8 — E‑Invoicing
-- [ ] ZATCA Phase‑2 adapter skeleton + tests
+- [ ] ZATCA Phase���2 adapter skeleton + tests
 - [ ] ETA clearance adapter skeleton + tests
 - [ ] Key storage/rotation + signing + conformance
 
