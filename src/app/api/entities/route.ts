@@ -106,6 +106,9 @@ const _api_GET = async (request: NextRequest) => {
  * Create new entity
  */
 const _api_POST = async (request: NextRequest) => {
+  let userId: string | undefined;
+  let tenantId: string | undefined;
+
   try {
     let ctx;
     try {
@@ -118,8 +121,8 @@ const _api_POST = async (request: NextRequest) => {
       );
     }
 
-    const userId = ctx.userId;
-    const tenantId = ctx.tenantId;
+    userId = ctx.userId;
+    tenantId = ctx.tenantId;
 
     if (!userId || !tenantId) {
       return NextResponse.json(
