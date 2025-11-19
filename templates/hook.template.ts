@@ -148,13 +148,14 @@ export function useLoadMore<T = any>(
   const { data, mutate, hasMore, pageSize, currentPage } = useData<T>(filters, options)
 
   const loadMore = useCallback(async () => {
+    const newOffset = currentPage * pageSize
     const newFilters = {
       ...filters,
-      offset: (currentPage * pageSize),
+      offset: newOffset,
     }
-    // Note: Refetch data by mutating the hook result from top-level
-    // Call the mutate function returned from useData above
-    await mutate(newFilters)
+    // Mutate should be called with new data or undefined to refetch
+    // The hook will re-run with new filters
+    await mutate()
   }, [filters, currentPage, pageSize, mutate])
 
   return { data, hasMore, loadMore, currentPage }

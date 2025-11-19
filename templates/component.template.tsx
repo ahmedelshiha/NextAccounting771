@@ -108,7 +108,7 @@ export function Component<T = any>({
   onEdit,
   onDelete,
 }: ComponentProps<T>) {
-  const { can } = usePermissions()
+  const { has } = usePermissions()
 
   // Show loading state
   if (loading) {
