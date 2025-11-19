@@ -142,7 +142,7 @@ export function Component<T = any>({
   if (variant === 'portal' && !can('component:view')) {
     return (
       <div className={`${className} p-4 bg-gray-50 border border-gray-200 rounded-md`}>
-        <p className="text-gray-600 text-sm">You don't have permission to view this content</p>
+        <p className="text-gray-600 text-sm">You don&apos;t have permission to view this content</p>
       </div>
     )
   }

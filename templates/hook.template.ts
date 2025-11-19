@@ -152,8 +152,10 @@ export function useLoadMore<T = any>(
       ...filters,
       offset: (currentPage * pageSize),
     }
-    await useData<T>(newFilters, options).mutate()
-  }, [filters, currentPage, pageSize, options])
+    // Note: Refetch data by mutating the hook result from top-level
+    // Call the mutate function returned from useData above
+    await mutate(newFilters)
+  }, [filters, currentPage, pageSize, mutate])
 
   return { data, hasMore, loadMore, currentPage }
 }
