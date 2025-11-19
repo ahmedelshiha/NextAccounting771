@@ -3,6 +3,7 @@
 import React from 'react'
 import { Booking } from '@/types/shared/entities/booking'
 import { usePermissions } from '@/lib/use-permissions'
+import { PERMISSIONS } from '@/lib/permissions'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -58,8 +59,8 @@ export default function BookingCard({
   className = '',
 }: BookingCardProps) {
   const { has } = usePermissions()
-  const canEditBooking = has('bookings:edit')
-  const canCancelBooking = has('bookings:cancel')
+  const canEditBooking = has(PERMISSIONS.BOOKINGS_EDIT)
+  const canCancelBooking = has(PERMISSIONS.BOOKINGS_CANCEL)
 
   if (!booking) return null
 
