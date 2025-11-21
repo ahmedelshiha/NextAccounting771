@@ -526,6 +526,36 @@ export const GET = withTenantContext(async (request, { params }) => {
 - **Context retrieval methods vary** - some pass as params, some require explicit calls
 - **40+ handlers are affected** - indicates systematic pattern, not isolated issues
 
+### Debug Commands for Phase 1
+
+**Find all handlers with 3-parameter signatures**:
+```bash
+grep -r "async (request.*{.*tenantId.*user.*}, { params }" src/app/api --include="*.ts" | wc -l
+```
+
+**List all affected files**:
+```bash
+grep -r "async (request.*{.*tenantId.*user.*}, { params }" src/app/api --include="*.ts" -l
+```
+
+**Find handlers missing requireTenantContext call**:
+```bash
+# After fixing signatures, verify requireTenantContext is called
+grep -r "const { user, tenantId } = requireTenantContext()" src/app/api --include="*.ts" | wc -l
+```
+
+**Type check after Phase 1**:
+```bash
+pnpm exec tsc --noEmit 2>&1 | grep -c "error TS2345"
+```
+
+### Expected Results After Phase 1
+
+✅ All handlers have 2-parameter signatures
+✅ All handlers call `requireTenantContext()` at start
+✅ `pnpm exec tsc --noEmit` shows 0 TS2345 handler signature errors
+✅ API routes still function (no behavior changes, just signature changes)
+
 ---
 
 # End of Comprehensive Ruleset
