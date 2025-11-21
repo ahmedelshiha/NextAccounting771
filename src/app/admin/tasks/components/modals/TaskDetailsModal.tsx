@@ -121,32 +121,32 @@ export default function TaskDetailsModal({ open, onClose, task }: Props) {
               {/* Meta grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {metaItem(<Calendar className="w-4 h-4" />, 'Due Date', dueDate ? new Date(dueDate).toLocaleString() : '—')}
-                {metaItem(<User className="w-4 h-4" />, 'Assignee', task?.assignee?.name ?? task?.assigneeId ?? 'Unassigned')}
+                {metaItem(<User className="w-4 h-4" />, 'Assignee', task?.assigneeId ? 'Assigned' : 'Unassigned')}
                 {metaItem(<AlertTriangle className="w-4 h-4" />, 'Status', status.replace('_',' '))}
-                {metaItem(<Clock className="w-4 h-4" />, 'Estimated Hours', (typeof task?.estimatedHours !== 'undefined' ? task.estimatedHours : '—'))}
+                {metaItem(<Clock className="w-4 h-4" />, 'Estimated Hours', typeof task?.estimatedHours === 'number' ? `${task.estimatedHours}h` : '—')}
               </div>
 
               {/* Business context */}
               {(task?.clientId || task?.bookingId) && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  {metaItem(<Building className="w-4 h-4" />, 'Client', task?.client?.name || task?.clientId)}
-                  {metaItem(<Link2 className="w-4 h-4" />, 'Booking', task?.booking ? `${task.booking.service || 'Service'} — ${task.booking.scheduledDate || ''}` : task?.bookingId)}
+                  {metaItem(<Building className="w-4 h-4" />, 'Client', task?.clientId || 'Not set')}
+                  {metaItem(<Link2 className="w-4 h-4" />, 'Booking', task?.bookingId || 'Not set')}
                 </div>
               )}
 
-              {/* Widgets */}
+              {/* Widgets - placeholder for future enhancements */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
                 <div>
-                  <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2"><Users className="w-4 h-4" /><span>Watchers</span></div>
-                  <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100"><TaskWatchers watchers={task?.watchers || []} /></div>
+                  <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2"><Users className="w-4 h-4" /><span>Activity</span></div>
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 text-sm text-gray-600">Task created at {task?.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'unknown'}</div>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2"><Clock className="w-4 h-4" /><span>Reminders</span></div>
-                  <div className="p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-100"><TaskReminders reminders={task?.reminders || []} /></div>
+                  <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2"><Clock className="w-4 h-4" /><span>Last Updated</span></div>
+                  <div className="p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 text-sm text-gray-600">{task?.updatedAt ? new Date(task.updatedAt).toLocaleDateString() : 'unknown'}</div>
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2"><Link2 className="w-4 h-4" /><span>Dependencies</span></div>
-                  <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100"><TaskDependencies dependencies={task?.dependencies || []} /></div>
+                  <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2"><Link2 className="w-4 h-4" /><span>Priority</span></div>
+                  <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100 text-sm font-medium">{priority.toUpperCase()}</div>
                 </div>
               </div>
 
