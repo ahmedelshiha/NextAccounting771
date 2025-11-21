@@ -68,7 +68,7 @@ const getCachedServices = withCache<any>(
 
     // For portal users, only show active services
     if (userRole !== 'ADMIN' && userRole !== 'TEAM_LEAD' && userRole !== 'TEAM_MEMBER') {
-      filters.status = 'ACTIVE'
+      filters.status = 'active'
     }
 
     const result = await svc.getServicesList(tenantId, filters as any)
@@ -119,16 +119,15 @@ export const GET = withTenantContext(
       }
 
       // Get cached services
-      const result = await getCachedServices(request, ctx)
+      const result = await getCachedServices(request)
 
-      if (!result || !result.data) {
+      if (!result || !result?.services) {
         return respond.ok(
-          [],
-          { pagination: { total: 0, limit: 20, offset: 0, hasMore: false } }
+          { services: [], total: 0, page: 0, limit: 20, totalPages: 0 }
         )
       }
 
-      return respond.ok(result.data, { pagination: result.pagination || {} })
+      return respond.ok(result)
     } catch (error) {
       logger.error('Failed to fetch services', { error })
       if (error instanceof Error && error.message.includes('Zod')) {
